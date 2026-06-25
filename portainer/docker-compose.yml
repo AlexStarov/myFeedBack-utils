@@ -1,0 +1,19 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - 10.0.0.237:9000:9000
+    container_name: Utils_portainer
+    command: -H unix:///var/run/docker.sock # --public-path /portainer
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer_data:/data
+
+networks:
+  default:
+    name: feedback-network
+    external: true

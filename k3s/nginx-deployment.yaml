@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: configs
+          mountPath: /etc/nginx/conf.d
+        - name: certs
+          mountPath: /etc/nginx/certs
+          readOnly: true
+        - name: auth
+          mountPath: /etc/nginx/auth
+          readOnly: true
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: configs
+        configMap:
+          name: nginx-configs
+      - name: certs
+        secret:
+          secretName: feedback-app-certs
+      - name: auth
+        secret:
+          secretName: nginx-basic-auth
+      - name: html
+        configMap:
+          name: nginx-html
