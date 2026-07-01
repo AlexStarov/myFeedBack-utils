@@ -1,0 +1,42 @@
+services:
+  nginx:
+    build: .
+    container_name: FeedBack_nginx
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 10.0.0.237:80:80
+      - 10.0.0.237:443:443
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - /etc/localtime:/etc/localtime:ro
+      - ./site.feedback-app.pp.ua.conf:/etc/nginx/conf.d/site.feedback-app.pp.ua.conf:ro
+      - ./upstream.conf:/etc/nginx/conf.d/00-upstream.conf:ro
+      - ./app.feedback-app.pp.ua.conf:/etc/nginx/conf.d/app.feedback-app.pp.ua.conf:ro
+      - ./api.feedback-app.pp.ua.conf:/etc/nginx/conf.d/api.feedback-app.pp.ua.conf:ro
+      - ./frontend.feedback-app.pp.ua.conf:/etc/nginx/conf.d/frontend.feedback-app.pp.ua.conf:ro
+      - ./starov.pp.ua.conf:/etc/nginx/conf.d/starov.pp.ua.conf:ro
+      # - ./odoo.feedback-app.pp.ua.conf:/etc/nginx/conf.d/odoo.feedback-app.pp.ua.conf:ro
+      - ./html:/usr/share/nginx/html:ro
+      - ./static/qr:/var/www/feedback-app/static/qr:ro
+      # Монтируем директорию с QR-кодами (через symlink)
+      # Пробрасываем реальную папку с сертификатами
+      - ../certs/ua.pp.feedback-app:/etc/nginx/certs-feedback-app:ro
+      - ../certs/ua.pp.starov:/etc/nginx/certs-starov:ro
+      # Монтируем директорию с данными Portainer
+      - ../utils/portainer:/etc/nginx/portainer:ro
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./
+          target: /etc/nginx/conf.d/
+          ignore:
+            - html/
+            - docker-compose.yml
+            - get-docker.sh
+
+networks:
+  default:
+    name: feedback-network
+    external: true

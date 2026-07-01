@@ -1,0 +1,15 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls",
+            "delegate_permission/common.get_login_creds"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.feedback",
+            "sha256_cert_fingerprints": [
+                "54:8E:16:A6:8F:0A:14:93:CA:4A:AF:6E:EC:B7:19:A2:07:66:E7:B1:11:B5:FC:78:ED:E1:01:D5:DB:CC:00:99"
+            ]
+        }
+    }
+]
